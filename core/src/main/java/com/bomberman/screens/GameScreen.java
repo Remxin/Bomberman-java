@@ -1,5 +1,6 @@
 package com.bomberman.screens;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.Gdx;
@@ -17,7 +18,7 @@ public class GameScreen implements Screen {
     private final float PLAYER_SIZE = 32;
     private final float SPEED = 200;
 
-    public GameScreen() {
+    public GameScreen(Game game) {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 600);
         shapeRenderer = new ShapeRenderer();
