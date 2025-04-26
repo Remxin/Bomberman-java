@@ -21,8 +21,7 @@ public class MainScreen implements Screen {
     private Texture background;
     private SpriteBatch batch;
     private Texture play_button_texture;
-    private Texture health_up_button_texture;
-    private Texture health_down_button_texture;
+    private Texture logo_texture;
 
     public MainScreen(Game game) {
         this.game = game;
@@ -32,28 +31,21 @@ public class MainScreen implements Screen {
     public void show() {
         batch = new SpriteBatch();
         stage = new Stage();
-        background = new Texture("MainScreen_background.png");
 
+        background = new Texture("MainScreen_background.png");
+        logo_texture = new Texture(Gdx.files.internal("logo.png"));
         play_button_texture = new Texture(Gdx.files.internal("play_button.png"));
-        health_up_button_texture = new Texture(Gdx.files.internal("health_up.png"));
-        health_down_button_texture = new Texture(Gdx.files.internal("health_down.png"));
+
+        Image logo = new Image(new TextureRegion(logo_texture));
 
         ImageButton.ImageButtonStyle style_play_button = new ImageButton.ImageButtonStyle();
         style_play_button.up = new TextureRegionDrawable(new TextureRegion(play_button_texture)); // stan normalny
         style_play_button.down = new TextureRegionDrawable(new TextureRegion(play_button_texture)); // stan wciśnięty (możesz użyć innej tekstury)
 
-        ImageButton.ImageButtonStyle style_health_button = new ImageButton.ImageButtonStyle();
-        style_health_button.up = new TextureRegionDrawable(new TextureRegion(health_up_button_texture)); // stan domyślny
-        style_health_button.down = new TextureRegionDrawable(new TextureRegion(health_down_button_texture));
+        logo.setPosition(Gdx.graphics.getWidth() / 2.0f - logo.getWidth() / 2.0f , Gdx.graphics.getHeight() / 1.3f - logo.getHeight() / 2.0f);
 
         ImageButton play_button = new ImageButton(style_play_button);
         play_button.setPosition(Gdx.graphics.getWidth() / 2.0f - play_button.getWidth() / 2.0f, Gdx.graphics.getHeight() / 4.5f - play_button.getHeight() / 2.0f);
-
-        ImageButton health_button = new ImageButton(style_health_button);
-        health_button.setPosition(Gdx.graphics.getWidth() / 2.0f -health_button.getWidth() / 2.0f, Gdx.graphics.getHeight() / 2.0f - health_button.getHeight() / 2.0f);
-
-        health_button.getStyle().up = new TextureRegionDrawable(new TextureRegion(health_up_button_texture));
-        health_button.setChecked(false);
 
         play_button.addListener(new ChangeListener() {
             @Override
@@ -62,19 +54,8 @@ public class MainScreen implements Screen {
             }
         });
 
-        health_button.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                if (health_button.isChecked()) {
-                    health_button.getStyle().up = new TextureRegionDrawable(new TextureRegion(health_down_button_texture));
-                } else {
-                    health_button.getStyle().up = new TextureRegionDrawable(new TextureRegion(health_up_button_texture));
-                }
-            }
-        });
-
+        stage.addActor(logo);
         stage.addActor(play_button);
-        stage.addActor(health_button);
 
         Gdx.input.setInputProcessor(stage);
     }
