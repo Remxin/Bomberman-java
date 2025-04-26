@@ -11,14 +11,17 @@ public class BombManager {
     private List<Bomb> bombs = new ArrayList<>();
     private Texture bombTexture;
     private float tileSize;
-    private int[][] map;
+    private Blocks[][] map;
     private Player player;
 
-    public BombManager(int[][] map, float tileSize, Texture bombTexture, Player player) {
-        this.map         = map;
-        this.tileSize    = tileSize;
+    public BombManager(Blocks[][] map, float tileSize, Texture bombTexture, Player player) {
+        this.map = map;
+        this.tileSize = tileSize;
         this.bombTexture = bombTexture;
-        this.player      = player;
+        this.player = player;
+    }
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     public float getTileSize(){

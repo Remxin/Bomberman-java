@@ -20,7 +20,7 @@ public abstract class Blocks {
     }
 
     public void render(SpriteBatch batch) {
-        if (isDestroyed) {
+        if (!isDestroyed) {
             batch.draw(blockTexture, bounds.x, bounds.y, bounds.width, bounds.height);
         }
     }

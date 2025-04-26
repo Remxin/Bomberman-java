@@ -50,7 +50,8 @@ public class Bomb {
         }
     }
 
-    public void explode(int[][] map, float tileSize, Player player){
+    public void explode(Blocks[][] map, float tileSize, Player player){
+
         damageCell(gridX, gridY, map);
 
         for (int dx = 1; dx <= radius; dx++) {
@@ -75,10 +76,14 @@ public class Bomb {
     }
 
 
-    private boolean damageCell(int x, int y, int[][] map){
+    private boolean damageCell(int x, int y, Blocks[][] map){
         if(x<0 || y<0 || x>=map.length || y>=map[0].length) return false;
-        if(map[x][y] == CELL_BRICK){
-            map[x][y] = CELL_EMPTY;
+        if (map[x][y] == null) return true;
+        if (map[x][y].isSolid()) {
+            return false;
+        }
+        if(map[x][y].isBreakable()){
+            map[x][y].onDestroy();
         }
 
         return true;

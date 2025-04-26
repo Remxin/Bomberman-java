@@ -47,8 +47,7 @@ public class Player {
 //                break;
 //        }
 //    }
-
-
+    //TODO: gracz nie moze wchodzic na bloki
     public void update(float delta){
         if(!isAlive) return;
 

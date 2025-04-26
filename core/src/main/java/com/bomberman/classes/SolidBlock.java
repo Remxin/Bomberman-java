@@ -1,7 +1,6 @@
 package com.bomberman.classes;
 
 import com.badlogic.gdx.graphics.Texture;
-import jdk.internal.org.commonmark.node.Block;
 
 public class SolidBlock extends Blocks {
     public SolidBlock(Texture texture, float x, float y, float width, float height) {
