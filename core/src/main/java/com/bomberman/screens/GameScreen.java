@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.Input;
 
@@ -15,14 +16,16 @@ public class GameScreen implements Screen {
 
     private float playerX = 100;
     private float playerY = 100;
-    private final float PLAYER_SIZE = 32;
+    private final float PLAYER_SIZE = 64;
     private final float SPEED = 200;
 
     public GameScreen(Game game) {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 600);
         shapeRenderer = new ShapeRenderer();
+
     }
+
 
     @Override
     public void render(float delta) {
