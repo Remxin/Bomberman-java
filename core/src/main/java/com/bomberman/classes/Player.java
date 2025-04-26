@@ -1,41 +1,31 @@
 package com.bomberman.classes;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import com.badlogic.gdx.math.Vector2;
 
 public class Player {
-    private Vector position;
-    private int maxHealth = 3;
-    private int currentHealth;
-    private double maxSpeed;
+    private static int MAX_SPEED = 200;
+
+    private Vector2 position;
     private double currentSpeed;
+    private boolean isAlive = true;
+    private BombManager bombManager;
 
-    public Player(int maxHealth, Vector position) {
-        this.position = new Vector(0.0, 0.0);
-        this.maxHealth = maxHealth;
-        this.currentHealth = maxHealth;
-        this.position = position;
+
+    public Player(Vector2 position, BombManager bombManager) {
+        this.position = new Vector2(position);
+        this.bombManager = bombManager;
     }
 
-    public int getMaxHealth() {
-        return maxHealth;
+    public Vector2 getPosition() {
+        return position;
     }
 
-    public void setMaxHealth(int maxHealth) {
-        this.maxHealth = maxHealth;
-    }
-
-    public int getCurrentHealth() {
-        return currentHealth;
-    }
-
-    public void takeDamage() {
-        currentHealth -= 1;
-    }
 
     public void speedUp(double velocity) {
         currentSpeed += velocity;
-        if (currentSpeed > maxSpeed) {
-            currentSpeed = maxSpeed;
+        if (currentSpeed > MAX_SPEED) {
+            currentSpeed = MAX_SPEED;
         }
     }
 
@@ -64,12 +54,13 @@ public class Player {
     }
 
     public void placeBomb() {
-        throw new NotImplementedException();
+        int gridX = (int)(position.x / bombManager.getTileSize());
+        int gridY = (int)(position.y / bombManager.getTileSize());
+        bombManager.placeBomb(gridX, gridY);
     }
 
     public void die() {
-        currentHealth = 0;
         currentSpeed = 0;
-        maxSpeed = 0;
+        isAlive = false;
     }
 }
