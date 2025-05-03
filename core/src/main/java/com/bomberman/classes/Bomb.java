@@ -79,14 +79,13 @@ public class Bomb {
     private boolean damageCell(int x, int y, Blocks[][] map){
         if(x<0 || y<0 || x>=map.length || y>=map[0].length) return false;
         if (map[x][y] == null) return true;
-        if (map[x][y].isSolid()) {
+
+        if (map[x][y].isBreakable()) {
+            map[x][y].onDestroy();
             return false;
         }
-        if(map[x][y].isBreakable()){
-            map[x][y].onDestroy();
-        }
 
-        return true;
+        return !map[x][y].isSolid();
     }
 
     public boolean isExploded() {

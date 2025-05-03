@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.bomberman.classes.Blocks;
 import com.bomberman.classes.BreakableBlock;
@@ -66,8 +67,31 @@ public class GameScreen implements Screen {
 
     }
 
+    private void checkPlayerCollision() {
+        Rectangle playerBounds = player.getBounds();
+
+        int startX = (int) (playerBounds.x / TILE_SIZE);
+        int startY = (int) (playerBounds.y / TILE_SIZE);
+        int endX = (int) (playerBounds.x + playerBounds.width / TILE_SIZE);
+        int endY = (int) (playerBounds.y + playerBounds.height / TILE_SIZE);
+
+        for (int x = startX; x <= endX; x++) {
+            for (int y = startY; y <= endY; y++) {
+                if (x >= 0 && x < map.length && y >= 0 && y < map[0].length){
+                    Blocks block = map[x][y];
+                    if (block != null && block.isSolid() && block.getBounds().overlaps(playerBounds)){
+                        player.revertPosition();
+                        player.updateBounds();
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
     private void update(float delta) {
         player.update(delta);
+        checkPlayerCollision();
         bombManager.update(delta);
     }
 

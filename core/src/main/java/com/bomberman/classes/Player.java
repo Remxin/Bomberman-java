@@ -2,11 +2,15 @@ package com.bomberman.classes;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Player {
     private Vector2 position;
     private static final float SPEED = 200f;
+    private static final float TILE_SIZE = 16f;
+    private float prevX, prevY;
+    private Rectangle bounds;
 
     private BombManager bombManager;
     private boolean isAlive = true;
@@ -15,6 +19,7 @@ public class Player {
     public Player(Vector2 spawnPosition, BombManager bombManager) {
         this.position = new Vector2(spawnPosition);
         this.bombManager = bombManager;
+        this.bounds = new Rectangle(position.x, position.y, TILE_SIZE, TILE_SIZE);
     }
 
 //    public void speedUp(double velocity) {
@@ -47,7 +52,9 @@ public class Player {
 //                break;
 //        }
 //    }
-    //TODO: gracz nie moze wchodzic na bloki
+    public void updateBounds() {
+        bounds.setPosition(position.x, position.y);
+    }
     public void update(float delta){
         if(!isAlive) return;
 
@@ -58,8 +65,13 @@ public class Player {
         else if (Gdx.input.isKeyPressed(Input.Keys.LEFT))  dx = -1;
         else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) dx =  1;
 
+        prevX = position.x;
+        prevY = position.y;
+
         position.x += dx * SPEED * delta;
         position.y += dy * SPEED * delta;
+
+        this.updateBounds();
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
             placeBomb();
@@ -75,6 +87,16 @@ public class Player {
 
     public Vector2 getPosition() {
         return position;
+    }
+
+    public Rectangle getBounds() {
+        return bounds;
+    }
+
+    public void revertPosition() {
+        position.x = prevX;
+        position.y = prevY;
+        bounds.setPosition(position.x, position.y);
     }
 
     public boolean isAlive() {

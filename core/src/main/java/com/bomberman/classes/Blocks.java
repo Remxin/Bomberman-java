@@ -37,5 +37,7 @@ public abstract class Blocks {
         return isBreakable;
     }
 
+    public boolean isDestroyed() {return isDestroyed;}
+
     public abstract void onDestroy();
 }
