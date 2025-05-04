@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.audio.Music;
 
 import javax.swing.*;
 
@@ -22,6 +23,7 @@ public class MainScreen implements Screen {
     private SpriteBatch batch;
     private Texture play_button_texture;
     private Texture logo_texture;
+    private Music music;
 
     public MainScreen(Game game) {
         this.game = game;
@@ -31,6 +33,11 @@ public class MainScreen implements Screen {
     public void show() {
         batch = new SpriteBatch();
         stage = new Stage();
+
+        music = Gdx.audio.newMusic(Gdx.files.internal("music/backgroundMusic.mp3"));
+        music.setLooping(true);
+        music.setVolume(0.5f);  // dowolnie
+        music.play();
 
         background = new Texture("MainScreen_background.png");
         logo_texture = new Texture(Gdx.files.internal("logo.png"));
