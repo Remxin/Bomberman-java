@@ -1,58 +1,50 @@
 package com.bomberman.classes;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import com.badlogic.gdx.graphics.Texture;
-
 
 public class BombManager {
-    private List<Bomb> bombs = new ArrayList<>();
-    private Texture bombTexture;
-    private float tileSize;
-    private Blocks[][] map;
-    private Player player;
 
-    public BombManager(Blocks[][] map, float tileSize, Texture bombTexture, Player player) {
+    private final List<Bomb> bombs = new ArrayList<>();
+    private final Texture bombTexture;
+    private final float tileSize;
+    private final Blocks[][] map;
+    private Player player;                // podpinany po stworzeniu
+
+    public BombManager(Blocks[][] map, float tileSize, Texture bombTex) {
         this.map = map;
         this.tileSize = tileSize;
-        this.bombTexture = bombTexture;
-        this.player = player;
+        this.bombTexture = bombTex;
     }
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
+    public void setPlayer(Player p) { this.player = p; }
 
-    public float getTileSize(){
-        return tileSize;
-    }
+    public void placeBomb(float worldX, float worldY) {
 
-    public void placeBomb(int gridX, int gridY){
-        for(Bomb b : bombs){
-            if(!b.isExploded() && b.getGridX() == gridX && b.getGridY() == gridY){
+        int gx = (int)((worldX + tileSize / 2f) / tileSize);
+        int gy = (int)((worldY + tileSize / 2f) / tileSize);
+
+        for (Bomb b : bombs) {
+            if (!b.isExploded() && b.getGridX() == gx && b.getGridY() == gy)
                 return;
-            }
         }
-        bombs.add(new Bomb(gridX, gridY, tileSize, bombTexture));
+        bombs.add(new Bomb(worldX, worldY, tileSize, bombTexture));
     }
 
-    public void update(float delta){
+    public void update(float delta) {
         Iterator<Bomb> it = bombs.iterator();
-        while(it.hasNext()){
+        while (it.hasNext()) {
             Bomb b = it.next();
             b.update(delta);
-            if(b.isExploded()){
+            if (b.isExploded()) {
                 b.explode(map, tileSize, player);
                 it.remove();
             }
         }
     }
-
-    public void render(SpriteBatch batch){
-        for(Bomb b : bombs){
-            b.render(batch);
-        }
+    public void render(SpriteBatch batch) {
+        for (Bomb b : bombs) b.render(batch);
     }
-
 }

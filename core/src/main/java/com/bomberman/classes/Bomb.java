@@ -5,91 +5,56 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 public class Bomb {
+
     public static final float DETONATION_TIME = 2f;
-    private static final int DEFAULT_RADIUS = 1;
-    public static final int CELL_EMPTY = 0;
-    public static final int CELL_WALL  = 1;
-    public static final int CELL_BRICK = 2;
+    private static final int  DEFAULT_RADIUS  = 2;
 
+    private final Vector2 worldPos;
+    private final int gridX, gridY;
 
-    private Vector2 worldPos;
-    private int gridX, gridY;
-    private float timer;
-    private int radius;
-    private boolean exploded;
+    private float  timer   = 0f;
+    private int    radius  = DEFAULT_RADIUS;
+    private boolean exploded = false;
 
-    private Texture bombTexture;
+    private final Texture texture;
 
-    public Bomb(int gridX, int gridY, float tileSize, Texture bombTexture) {
-        this.gridX = gridX;
-        this.gridY = gridY;
-        this.worldPos = new Vector2(gridX * tileSize, gridY * tileSize);
-        this.radius = DEFAULT_RADIUS;
-        this.timer = 0f;
-        this.exploded = false;
-        this.bombTexture = bombTexture;
+    public Bomb(float worldX, float worldY, float tile, Texture tex) {
+        this.worldPos = new Vector2(worldX, worldY);
+        this.gridX    = (int)((worldX + tile / 2f) / tile);
+        this.gridY    = (int)((worldY + tile / 2f) / tile);
+        this.texture  = tex;
     }
 
-    public int getGridX() {
-        return gridX;
-    }
-    public int getGridY() {
-        return gridY;
-    }
+    public int  getGridX()     { return gridX; }
+    public int  getGridY()     { return gridY; }
+    public boolean isExploded(){ return exploded; }
 
-    public void update(float delta){
+    public void update(float delta) {
         timer += delta;
-        if (timer >= DETONATION_TIME) {
-            exploded = true;
-        }
+        if (timer >= DETONATION_TIME) exploded = true;
     }
 
-    public void render(SpriteBatch batch){
-        if (!exploded) {
-            batch.draw(bombTexture, worldPos.x, worldPos.y);
-        }
+    public void render(SpriteBatch batch) {
+        if (!exploded) batch.draw(texture, worldPos.x, worldPos.y);
     }
 
-    public void explode(Blocks[][] map, float tileSize, Player player){
-
+    public void explode(Blocks[][] map, float tile, Player player) {
         damageCell(gridX, gridY, map);
 
-        for (int dx = 1; dx <= radius; dx++) {
-            if (!damageCell(gridX + dx, gridY, map)) break;
-        }
-        for (int dx = 1; dx <= radius; dx++) {
-            if (!damageCell(gridX - dx, gridY, map)) break;
-        }
-        for (int dy = 1; dy <= radius; dy++) {
-            if (!damageCell(gridX, gridY + dy, map)) break;
-        }
-        for (int dy = 1; dy <= radius; dy++) {
-            if (!damageCell(gridX, gridY - dy, map)) break;
-        }
+        for (int d = 1; d <= radius; ++d) if (!damageCell(gridX + d, gridY, map)) break;
+        for (int d = 1; d <= radius; ++d) if (!damageCell(gridX - d, gridY, map)) break;
+        for (int d = 1; d <= radius; ++d) if (!damageCell(gridX, gridY + d, map)) break;
+        for (int d = 1; d <= radius; ++d) if (!damageCell(gridX, gridY - d, map)) break;
 
-        Vector2 p = player.getPosition();
-        int px = (int)(p.x /tileSize), py = (int)(p.y / tileSize);
-        if (Math.abs(px - gridX) + Math.abs(py - gridY) <= radius) {
-            player.die();
-        }
-
+        int px = Player.toGrid(player.getPosition().x, tile);
+        int py = Player.toGrid(player.getPosition().y, tile);
+        if (Math.abs(px - gridX) + Math.abs(py - gridY) <= radius) player.die();
     }
 
-
-    private boolean damageCell(int x, int y, Blocks[][] map){
-        if(x<0 || y<0 || x>=map.length || y>=map[0].length) return false;
+    private static boolean damageCell(int x, int y, Blocks[][] map) {
+        if (x < 0 || y < 0 || x >= map.length || y >= map[0].length) return false;
         if (map[x][y] == null) return true;
-
-        if (map[x][y].isBreakable()) {
-            map[x][y].onDestroy();
-            return false;
-        }
-
+        if (map[x][y].isBreakable()) { map[x][y].onDestroy(); return false; }
         return !map[x][y].isSolid();
     }
-
-    public boolean isExploded() {
-        return exploded;
-    }
-
 }
