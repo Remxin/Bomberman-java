@@ -11,22 +11,28 @@ public class PlayerController {
     private final BombManager bombManager;
     private final float tile;
 
-    public PlayerController(Player player, BombManager bombManager, float tileSize) {
+    private final int upKey, downKey, leftKey, rightKey, bombKey;
+
+    public PlayerController(Player player, BombManager bombManager,float tileSize,int upKey, int downKey, int leftKey, int rightKey,int bombKey) {
         this.player      = player;
         this.bombManager = bombManager;
         this.tile        = tileSize;
+        this.upKey       = upKey;
+        this.downKey     = downKey;
+        this.leftKey     = leftKey;
+        this.rightKey    = rightKey;
+        this.bombKey     = bombKey;
     }
-
     public void update(float delta) {
         float dx = 0f, dy = 0f;
-        if (Gdx.input.isKeyPressed(Input.Keys.UP))    dy =  1;
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN))  dy = -1;
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT))  dx = -1;
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) dx =  1;
+        if (Gdx.input.isKeyPressed(upKey))    dy =  1;
+        if (Gdx.input.isKeyPressed(downKey))  dy = -1;
+        if (Gdx.input.isKeyPressed(leftKey))  dx = -1;
+        if (Gdx.input.isKeyPressed(rightKey)) dx =  1;
 
         player.move(dx * SPEED * delta, dy * SPEED * delta);
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+        if (Gdx.input.isKeyJustPressed(bombKey)) {
             int gridX = Player.toGrid(player.getPosition().x, tile);
             int gridY = Player.toGrid(player.getPosition().y, tile);
 

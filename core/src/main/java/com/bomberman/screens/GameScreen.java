@@ -18,6 +18,8 @@ import com.bomberman.classes.Bomb;
 import com.bomberman.classes.SolidBlock;
 import com.sun.tools.javac.comp.Todo;
 import com.bomberman.classes.PlayerController;
+import com.badlogic.gdx.Input;
+
 
 public class GameScreen implements Screen {
     private static final float WORLD_WIDTH = 800;
@@ -28,11 +30,17 @@ public class GameScreen implements Screen {
     private ShapeRenderer shapeRenderer;
     private SpriteBatch batch;
 
+    private static final int Map_W = 25;
+    private static final int Map_H = 19;
+    private static final int[][] SPAWNS = {
+            {1,1}, {Map_W - 2, Map_H - 2},
+    };
+
     private Blocks[][] map;
     private Texture wallTex, brickTex, bombTex;
     private BombManager bombManager;
-    private Player player;
-    private PlayerController controller;
+    private Player p1, p2;
+    private PlayerController c1, c2;
 
 
     public GameScreen(Game game) {
@@ -45,9 +53,13 @@ public class GameScreen implements Screen {
         brickTex = new Texture(Gdx.files.internal("breakable_block.png"));
         bombTex  = new Texture(Gdx.files.internal("bomb.png"));
 
-        map = new Blocks[25][19];
+        map = new Blocks[Map_W][Map_H];
         for (int x = 0; x < map.length; x++) {
             for (int y = 0; y < map[0].length; y++) {
+                if(isSpawnArea(x,y)){
+                    map[x][y] = null;
+                    continue;
+                }
                 if (x == 0 || y == 0 || x == map.length-1 || y == map[0].length-1) {
                     map[x][y] = new SolidBlock(wallTex, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                 } else if (x % 2 == 0 && y % 2 == 0) {
@@ -61,16 +73,18 @@ public class GameScreen implements Screen {
         }
 
 
-        player = new Player(new Vector2(3 * TILE_SIZE, 3 * TILE_SIZE), TILE_SIZE);
+        p1 = new Player(new Vector2(SPAWNS[0][0]*TILE_SIZE, SPAWNS[0][1]*TILE_SIZE), TILE_SIZE);
+        p2 = new Player(new Vector2(SPAWNS[1][0]*TILE_SIZE, SPAWNS[1][1]*TILE_SIZE), TILE_SIZE);
         bombManager = new BombManager(map, TILE_SIZE, bombTex);
-        bombManager.setPlayer(player);
+        bombManager.addPlayer(p1);
+        bombManager.addPlayer(p2);
 
-        controller   = new PlayerController(player, bombManager, TILE_SIZE);
-
+        c1 = new PlayerController(p1, bombManager, TILE_SIZE, Input.Keys.W, Input.Keys.S, Input.Keys.A, Input.Keys.D, Input.Keys.SPACE);
+        c2 = new PlayerController(p2, bombManager, TILE_SIZE, Input.Keys.UP, Input.Keys.DOWN, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.ENTER);
 
     }
 
-    private void checkPlayerCollision() {
+    private void checkPlayerCollision(Player player) {
         Rectangle playerBounds = player.getBounds();
 
         int startX = Math.max(0, (int)(playerBounds.x / TILE_SIZE));
@@ -114,9 +128,23 @@ public class GameScreen implements Screen {
         }
     }
 
+    private boolean isSpawnArea(int x, int y) {
+        if(x == 0 || y == 0 || x == map.length-1 || y == map[0].length-1) return false;
+        for (int[] s : SPAWNS) {
+            int sx = s[0];
+            int sy = s[1];
+            if (x == sx && y == sy) return true;
+            if (x == sx && Math.abs(y - sy) == 1) return true;
+            if (y == sy && Math.abs(x - sx) == 1) return true;
+        }
+        return false;
+    }
+
     private void update(float delta) {
-        controller.update(delta);
-        checkPlayerCollision();
+        c1.update(delta);
+        c2.update(delta);
+        checkPlayerCollision(p1);
+        checkPlayerCollision(p2);
         bombManager.update(delta);
     }
 
@@ -142,9 +170,12 @@ public class GameScreen implements Screen {
 
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        Vector2 pos = player.getPosition();
+        Vector2 v = p1.getPosition();
+        shapeRenderer.rect(v.x, v.y, TILE_SIZE, TILE_SIZE);
+        v = p2.getPosition();
+        shapeRenderer.rect(v.x, v.y, TILE_SIZE, TILE_SIZE);
+
         shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(pos.x, pos.y, TILE_SIZE, TILE_SIZE);
         shapeRenderer.end();
     }
 

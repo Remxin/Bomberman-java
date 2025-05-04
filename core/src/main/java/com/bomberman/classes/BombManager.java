@@ -12,14 +12,16 @@ public class BombManager {
     private final Texture bombTexture;
     private final float tileSize;
     private final Blocks[][] map;
-    private Player player;                // podpinany po stworzeniu
+    private final List <Player> players = new ArrayList<>();                // podpinany po stworzeniu
 
     public BombManager(Blocks[][] map, float tileSize, Texture bombTex) {
         this.map = map;
         this.tileSize = tileSize;
         this.bombTexture = bombTex;
     }
-    public void setPlayer(Player p) { this.player = p; }
+    public void addPlayer(Player player) {
+        players.add(player);
+    }
 
     public void placeBomb(float worldX, float worldY) {
 
@@ -39,7 +41,7 @@ public class BombManager {
             Bomb b = it.next();
             b.update(delta);
             if (b.isExploded()) {
-                b.explode(map, tileSize, player);
+                b.explode(map, tileSize, players);
                 it.remove();
             }
         }

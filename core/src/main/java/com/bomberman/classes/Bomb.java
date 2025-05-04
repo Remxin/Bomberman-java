@@ -3,6 +3,7 @@ package com.bomberman.classes;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import java.util.List;
 
 public class Bomb {
 
@@ -38,7 +39,7 @@ public class Bomb {
         if (!exploded) batch.draw(texture, worldPos.x, worldPos.y);
     }
 
-    public void explode(Blocks[][] map, float tile, Player player) {
+    public void explode(Blocks[][] map, float tile, List <Player> players) {
         damageCell(gridX, gridY, map);
 
         for (int d = 1; d <= radius; ++d) if (!damageCell(gridX + d, gridY, map)) break;
@@ -46,9 +47,13 @@ public class Bomb {
         for (int d = 1; d <= radius; ++d) if (!damageCell(gridX, gridY + d, map)) break;
         for (int d = 1; d <= radius; ++d) if (!damageCell(gridX, gridY - d, map)) break;
 
-        int px = Player.toGrid(player.getPosition().x, tile);
-        int py = Player.toGrid(player.getPosition().y, tile);
-        if (Math.abs(px - gridX) + Math.abs(py - gridY) <= radius) player.die();
+        for(Player p : players){
+            int px = Player.toGrid(p.getPosition().x, tile);
+            int py = Player.toGrid(p.getPosition().y, tile);
+            if(Math.abs(px - gridX) + Math.abs(py - gridY) <= radius){
+                p.die();
+            }
+        }
     }
 
     private static boolean damageCell(int x, int y, Blocks[][] map) {
