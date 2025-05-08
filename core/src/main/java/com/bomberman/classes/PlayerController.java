@@ -5,15 +5,15 @@ import com.badlogic.gdx.Input;
 
 public class PlayerController {
 
-    private static final float SPEED = 200f;
 
     private final Player player;
     private final BombManager bombManager;
     private final float tile;
+    private final float speed; // * 50
 
     private final int upKey, downKey, leftKey, rightKey, bombKey;
 
-    public PlayerController(Player player, BombManager bombManager,float tileSize,int upKey, int downKey, int leftKey, int rightKey,int bombKey) {
+    public PlayerController(Player player, BombManager bombManager,float tileSize,int upKey, int downKey, int leftKey, int rightKey,int bombKey, float speed) {
         this.player      = player;
         this.bombManager = bombManager;
         this.tile        = tileSize;
@@ -22,6 +22,7 @@ public class PlayerController {
         this.leftKey     = leftKey;
         this.rightKey    = rightKey;
         this.bombKey     = bombKey;
+        this.speed = speed * 90;
     }
     public void update(float delta) {
         float dx = 0f, dy = 0f;
@@ -30,7 +31,7 @@ public class PlayerController {
         if (Gdx.input.isKeyPressed(leftKey))  dx = -1;
         if (Gdx.input.isKeyPressed(rightKey)) dx =  1;
 
-        player.move(dx * SPEED * delta, dy * SPEED * delta);
+        player.move(dx * speed * delta, dy * speed * delta);
 
         if (Gdx.input.isKeyJustPressed(bombKey)) {
             int gridX = Player.toGrid(player.getPosition().x, tile);
