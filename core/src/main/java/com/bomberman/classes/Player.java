@@ -1,75 +1,47 @@
 package com.bomberman.classes;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
 public class Player {
-    private Vector position;
-    private int maxHealth = 3;
-    private int currentHealth;
-    private double maxSpeed;
-    private double currentSpeed;
 
-    public Player(int maxHealth, Vector position) {
-        this.position = new Vector(0.0, 0.0);
-        this.maxHealth = maxHealth;
-        this.currentHealth = maxHealth;
-        this.position = position;
+    private final Vector2 position;
+    private final Rectangle bounds;
+    private final float tileSize;
+
+    private boolean isAlive = true;
+
+    public Player(Vector2 spawnPos, float tileSize) {
+        this.tileSize = tileSize;
+        this.position = new Vector2(spawnPos);
+        this.bounds   = new Rectangle(position.x, position.y, tileSize, tileSize);
     }
 
-    public int getMaxHealth() {
-        return maxHealth;
+
+    public void move(float dx, float dy) {
+        if (!isAlive) return;
+        position.add(dx, dy);
+        bounds.setPosition(position.x, position.y);
     }
 
-    public void setMaxHealth(int maxHealth) {
-        this.maxHealth = maxHealth;
+    public void setPosition(Vector2 newPos) {
+        position.set(newPos);
+        bounds.setPosition(position.x, position.y);
     }
 
-    public int getCurrentHealth() {
-        return currentHealth;
+    public void updateBounds() {
+        bounds.setPosition(position.x, position.y);
     }
 
-    public void takeDamage() {
-        currentHealth -= 1;
-    }
 
-    public void speedUp(double velocity) {
-        currentSpeed += velocity;
-        if (currentSpeed > maxSpeed) {
-            currentSpeed = maxSpeed;
-        }
-    }
+    public Vector2   getPosition() { return position; }
+    public Rectangle getBounds()   { return bounds;   }
 
-    public void speedDown(double velocity) {
-        currentSpeed -= velocity;
-        if (currentSpeed < 0) {
-            currentSpeed = 0;
-        }
-    }
+    public boolean isAlive()   { return isAlive; }
+    public void    die()       { isAlive = false; }
 
-    public void move(Direction direction) {
-        switch (direction) {
-            case UP:
-                position.y -= currentSpeed;
-                break;
-            case DOWN:
-                position.y += currentSpeed;
-                break;
-            case LEFT:
-                position.x -= currentSpeed;
-                break;
-            case RIGHT:
-                position.x += currentSpeed;
-                break;
-        }
-    }
 
-    public void placeBomb() {
-        throw new NotImplementedException();
-    }
-
-    public void die() {
-        currentHealth = 0;
-        currentSpeed = 0;
-        maxSpeed = 0;
+    public static int toGrid(float worldCoord, float tile) {
+        return (int)((worldCoord + tile / 2f) / tile);
     }
 }
