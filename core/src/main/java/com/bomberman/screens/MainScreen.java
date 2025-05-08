@@ -7,24 +7,22 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
-import javax.swing.*;
+import com.bomberman.game.Main;
+import com.bomberman.ui.*;
 
 public class MainScreen implements Screen {
     private Stage stage;
-    private Game game;
+    private Main game;
     private Texture background;
     private SpriteBatch batch;
     private Texture play_button_texture;
     private Texture logo_texture;
 
     public MainScreen(Game game) {
-        this.game = game;
+        this.game = (Main) game;
     }
 
     @Override
@@ -38,21 +36,13 @@ public class MainScreen implements Screen {
 
         Image logo = new Image(new TextureRegion(logo_texture));
 
-        ImageButton.ImageButtonStyle style_play_button = new ImageButton.ImageButtonStyle();
-        style_play_button.up = new TextureRegionDrawable(new TextureRegion(play_button_texture)); // stan normalny
-        style_play_button.down = new TextureRegionDrawable(new TextureRegion(play_button_texture)); // stan wciśnięty (możesz użyć innej tekstury)
-
-        logo.setPosition(Gdx.graphics.getWidth() / 2.0f - logo.getWidth() / 2.0f , Gdx.graphics.getHeight() / 1.3f - logo.getHeight() / 2.0f);
-
-        ImageButton play_button = new ImageButton(style_play_button);
-        play_button.setPosition(Gdx.graphics.getWidth() / 2.0f - play_button.getWidth() / 2.0f, Gdx.graphics.getHeight() / 4.5f - play_button.getHeight() / 2.0f);
-
-        play_button.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent changeEvent, Actor actor) {
-                game.setScreen(new GameScreen(game));
-            }
-        });
+        ImageButton play_button = new ScreenRedirectButton(
+            game,
+            play_button_texture,
+            new CreateGameScreen(game),
+            Gdx.graphics.getWidth() / 2.0f - play_button_texture.getWidth() / 2.0f,
+            Gdx.graphics.getHeight() / 4.5f - play_button_texture.getHeight() / 2.0f
+        );
 
         stage.addActor(logo);
         stage.addActor(play_button);
