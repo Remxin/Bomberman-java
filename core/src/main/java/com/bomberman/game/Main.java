@@ -19,6 +19,7 @@ public class Main extends Game {
         //batch = new SpriteBatch();
         //image = new Texture("libgdx.png");
         setScreen(new MainScreen(this));
+        context = new GlobalContext();
     }
 
 //    @Override
