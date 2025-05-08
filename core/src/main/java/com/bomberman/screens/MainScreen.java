@@ -48,7 +48,7 @@ public class MainScreen implements Screen {
         ImageButton play_button = new ScreenRedirectButton(
             game,
             play_button_texture,
-            new CreateGameScreen(game),
+            () -> new CreateGameScreen(game),
             Gdx.graphics.getWidth() / 2.0f - play_button_texture.getWidth() / 2.0f,
             Gdx.graphics.getHeight() / 4.5f - play_button_texture.getHeight() / 2.0f
         );

@@ -9,16 +9,18 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.Screen;
 
+import java.util.function.Supplier;
+
 public class ScreenRedirectButton extends ImageButton {
 
-    public ScreenRedirectButton(Game game, Texture buttonTexture, Screen targetScreen, float x, float y) {
+    public ScreenRedirectButton(Game game, Texture buttonTexture, Supplier<Screen> targetScreen, float x, float y) {
         super(createStyle(buttonTexture));
         setPosition(x, y);
 
         addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.setScreen(targetScreen);
+                game.setScreen(targetScreen.get());
             }
         });
     }

@@ -98,7 +98,7 @@ public class CreateGameScreen implements Screen {
         ImageButton play_button = new ScreenRedirectButton(
             game,
             play_button_texture,
-            new GameScreen(game),
+            () -> new GameScreen(game),
             Gdx.graphics.getWidth() - 350,
             Gdx.graphics.getHeight() / 4.75f - play_button_texture.getHeight() / 2.0f
         );
