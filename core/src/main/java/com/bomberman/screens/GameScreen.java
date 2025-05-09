@@ -52,7 +52,9 @@ public class GameScreen implements Screen {
         brickTex = new Texture(Gdx.files.internal("breakable_block.png"));
         Texture bombRedTex = new Texture(Gdx.files.internal("bomb_red.png"));
         Texture bombBlueTex = new Texture(Gdx.files.internal("bomb_blue.png"));
-//        bombTex  = new Texture(Gdx.files.internal("bomb.png"));
+
+        Texture explosionRedTex = new Texture(Gdx.files.internal("explosion_red.png"));
+        Texture explosionBlueTex = new Texture(Gdx.files.internal("explosion_blue.png"));
 
         map = new Blocks[Map_W][Map_H];
         for (int x = 0; x < map.length; x++) {
@@ -77,8 +79,12 @@ public class GameScreen implements Screen {
         p1 = new Player(new Vector2(SPAWNS[0][0]*TILE_SIZE, SPAWNS[0][1]*TILE_SIZE), PLAYER_SIZE, PlayerColor.RED);
         p2 = new Player(new Vector2(SPAWNS[1][0]*TILE_SIZE, SPAWNS[1][1]*TILE_SIZE), PLAYER_SIZE, PlayerColor.BLUE);
         bombManager = new BombManager(map, TILE_SIZE);
+
         bombManager.setBombTexture(PlayerColor.RED, bombRedTex);
         bombManager.setBombTexture(PlayerColor.BLUE, bombBlueTex);
+        bombManager.setExplosionTexture(PlayerColor.RED, explosionRedTex);
+        bombManager.setExplosionTexture(PlayerColor.BLUE, explosionBlueTex);
+
         bombManager.addPlayer(p1);
         bombManager.addPlayer(p2);
 
