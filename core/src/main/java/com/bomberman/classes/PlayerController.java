@@ -47,7 +47,6 @@ public class PlayerController {
             // Przekaż współrzędne świata odpowiadające współrzędnym siatki
             float worldX = gridX * tileSize;
             float worldY = gridY * tileSize;
-            Gdx.app.log("DEBUG", "gridX: " + gridX + " gridY: " + gridY + " worldX: " + worldX + " worldY: " + worldY);
 
             // Umieść bombę używając współrzędnych świata
             bombManager.placeBomb(worldX, worldY, player.getColor());
