@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -19,6 +20,7 @@ import com.badlogic.gdx.Input;
 public class GameScreen implements Screen {
     private Main game;
     private static final float WORLD_WIDTH = 800;
+    private static final float PLAYER_HEADER_HEIGHT = 50;
     private static final float WORLD_HEIGHT = 608;
     private static final float TILE_SIZE = 32f;
     private static final float PLAYER_SIZE = TILE_SIZE - 8f;
@@ -27,6 +29,7 @@ public class GameScreen implements Screen {
     private OrthographicCamera camera;
     private ShapeRenderer shapeRenderer;
     private SpriteBatch batch;
+    private BitmapFont font;
 
     private static final int Map_W = 25;
     private static final int Map_H = 19;
@@ -39,14 +42,18 @@ public class GameScreen implements Screen {
     private BombManager bombManager;
     private Player p1, p2;
     private PlayerController c1, c2;
+    private Texture playerHeadRedTex, playerHeadBlueTex;
 
 
     public GameScreen(Game g) {
         game = (Main) g;
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, WORLD_WIDTH, WORLD_HEIGHT);
+        camera.setToOrtho(false, WORLD_WIDTH, WORLD_HEIGHT + PLAYER_HEADER_HEIGHT);
         shapeRenderer = new ShapeRenderer();
         batch = new SpriteBatch();
+
+        font = new BitmapFont();
+        font.getData().setScale(1.2f);
 
         wallTex  = new Texture(Gdx.files.internal("solid_block.png"));
         brickTex = new Texture(Gdx.files.internal("breakable_block.png"));
@@ -55,6 +62,9 @@ public class GameScreen implements Screen {
 
         Texture explosionRedTex = new Texture(Gdx.files.internal("explosion_red.png"));
         Texture explosionBlueTex = new Texture(Gdx.files.internal("explosion_blue.png"));
+
+        playerHeadRedTex = new Texture(Gdx.files.internal("player_head_red.png"));
+        playerHeadBlueTex = new Texture(Gdx.files.internal("player_head_blue.png"));
 
         map = new Blocks[Map_W][Map_H];
         for (int x = 0; x < map.length; x++) {
@@ -76,10 +86,10 @@ public class GameScreen implements Screen {
         }
 
 
-        p1 = new Player(new Vector2(SPAWNS[0][0]*TILE_SIZE, SPAWNS[0][1]*TILE_SIZE), PLAYER_SIZE, PlayerColor.RED);
-        p2 = new Player(new Vector2(SPAWNS[1][0]*TILE_SIZE, SPAWNS[1][1]*TILE_SIZE), PLAYER_SIZE, PlayerColor.BLUE);
-        bombManager = new BombManager(map, TILE_SIZE);
+        p1 = new Player(new Vector2(SPAWNS[0][0]*TILE_SIZE, SPAWNS[0][1]*TILE_SIZE), PLAYER_SIZE, PlayerColor.RED, game.context.maxPlayerHealth, game.context.initialBombExplosionRadius);
+        p2 = new Player(new Vector2(SPAWNS[1][0]*TILE_SIZE, SPAWNS[1][1]*TILE_SIZE), PLAYER_SIZE, PlayerColor.BLUE, game.context.maxPlayerHealth, game.context.initialBombExplosionRadius);
 
+        bombManager = new BombManager(map, TILE_SIZE);
         bombManager.setBombTexture(PlayerColor.RED, bombRedTex);
         bombManager.setBombTexture(PlayerColor.BLUE, bombBlueTex);
         bombManager.setExplosionTexture(PlayerColor.RED, explosionRedTex);
@@ -90,7 +100,6 @@ public class GameScreen implements Screen {
 
         c1 = new PlayerController(p1, bombManager, TILE_SIZE, Input.Keys.W, Input.Keys.S, Input.Keys.A, Input.Keys.D, Input.Keys.SPACE, (float)game.context.initialPlayerSpeed);
         c2 = new PlayerController(p2, bombManager, TILE_SIZE, Input.Keys.UP, Input.Keys.DOWN, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.ENTER, (float)game.context.initialPlayerSpeed);
-
     }
 
     private void checkPlayerCollision(Player player) {
@@ -161,12 +170,14 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         update(delta);
 
+
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        camera.update();
+        camera.update()     ;
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
+
 
         // Rysowanie mapy
         for (Blocks[] blocks : map) {
@@ -179,6 +190,7 @@ public class GameScreen implements Screen {
 
         // Rysowanie bomb
         bombManager.render(batch);
+        renderUI();
         batch.end();
 
         // Rysowanie graczy (tylko jeśli są żywi)
@@ -197,6 +209,7 @@ public class GameScreen implements Screen {
             shapeRenderer.rect(v2.x, v2.y, PLAYER_SIZE, PLAYER_SIZE);
         }
 
+
         shapeRenderer.setColor(1, 1, 1, 1);
         shapeRenderer.end();
 
@@ -204,7 +217,6 @@ public class GameScreen implements Screen {
         checkGameOver();
     }
 
-    // Dodaj tę metodę do klasy GameScreen
     private void checkGameOver() {
         if (!p1.isAlive() && !p2.isAlive()) {
             Gdx.app.log("GAME", "Game Over! Both players died!");
@@ -216,6 +228,24 @@ public class GameScreen implements Screen {
             Gdx.app.log("GAME", "Player 1 wins!");
             // Logika dla zwycięstwa gracza 1
         }
+    }
+
+    public void renderUI() {
+        if (playerHeadBlueTex == null || playerHeadRedTex == null) return;
+
+        float padding = 10f;
+        float iconSizeH = 32f;
+        float iconSizeW = 46f;
+        float topY = camera.viewportHeight - iconSizeH - padding;
+
+        // Gracz 1 (czerwony)
+        batch.draw(playerHeadRedTex, padding, topY, iconSizeW, iconSizeH);
+        font.draw(batch, "x " + p1.hearth, padding + iconSizeW + 5, topY + iconSizeH - 5);
+
+        // Gracz 2 (niebieski)
+        float x2 = padding + 150f;
+        batch.draw(playerHeadBlueTex, x2, topY, iconSizeW, iconSizeH);
+        font.draw(batch, "x " + p2.hearth, x2 + iconSizeW + 5, topY + iconSizeH - 5);
     }
 
     @Override public void show()    {}

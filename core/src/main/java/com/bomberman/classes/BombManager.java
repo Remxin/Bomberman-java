@@ -29,7 +29,7 @@ public class BombManager {
         players.add(player);
     }
 
-    public void placeBomb(float worldX, float worldY, PlayerColor color) {
+    public void placeBomb(float worldX, float worldY, Player player) {
         // Konwersja współrzędnych świata na współrzędne siatki
         int gx = (int)(worldX / tileSize);
         int gy = (int)(worldY / tileSize);
@@ -41,9 +41,9 @@ public class BombManager {
             }
         }
 
-        Texture tex = bombTextures.get(color);
-        Texture explosionTex = explosionTextures.get(color);
-        bombs.add(new Bomb(gx, gy, tileSize, tex, explosionTex));
+        Texture tex = bombTextures.get(player.getColor());
+        Texture explosionTex = explosionTextures.get(player.getColor());
+        bombs.add(new Bomb(gx, gy, tileSize, tex, explosionTex, player.bombExplosionRadius));
     }
 
     public void update(float delta) {

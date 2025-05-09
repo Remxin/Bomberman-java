@@ -37,7 +37,7 @@ public class Bomb {
     private static final float EXPLOSION_DURATION = 0.5f;
     private boolean finished = false;
 
-    public Bomb(float gridX, float gridY, float tileSize, Texture tex, Texture explosionTexture) {
+    public Bomb(float gridX, float gridY, float tileSize, Texture tex, Texture explosionTexture, int radius) {
         this.gridX = (int)gridX;
         this.gridY = (int)gridY;
         this.tileSize = tileSize;
@@ -47,7 +47,9 @@ public class Bomb {
         this.worldPos = new Vector2(worldX, worldY);
         this.texture  = tex;
         this.explosionTexture = explosionTexture;
+        this.radius = radius;
     }
+
 
     public int  getGridX()     { return gridX; }
     public int  getGridY()     { return gridY; }
@@ -120,7 +122,8 @@ public class Bomb {
                 int ex = Player.toGrid(e.position.x, tile);
                 int ey = Player.toGrid(e.position.y, tile);
                 if (ex == px && ey == py) {
-                    p.die();
+                    p.takeDamage();
+                    p.respawn();
                     break;
                 }
             }

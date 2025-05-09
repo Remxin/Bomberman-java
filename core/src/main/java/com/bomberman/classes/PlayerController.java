@@ -49,7 +49,7 @@ public class PlayerController {
             float worldY = gridY * tileSize;
 
             // Umieść bombę używając współrzędnych świata
-            bombManager.placeBomb(worldX, worldY, player.getColor());
+            bombManager.placeBomb(worldX, worldY, player);
         }
     }
 }
