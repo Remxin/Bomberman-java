@@ -1,5 +1,6 @@
 package com.bomberman.classes;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -15,14 +16,21 @@ public class Bomb {
 
     private float  timer   = 0f;
     private int    radius  = DEFAULT_RADIUS;
+    public static final float BOMB_SIZE = 30f;
     private boolean exploded = false;
 
     private final Texture texture;
 
-    public Bomb(float worldX, float worldY, float tile, Texture tex) {
+    public Bomb(float gridX, float gridY, float tileSize, Texture tex) {
+        this.gridX = (int)gridX;
+        this.gridY = (int)gridY;
+
+        // Obliczenie pozycji w świecie - wyśrodkowanie bomby na kafelku
+        float worldX = this.gridX * tileSize + (tileSize - BOMB_SIZE) / 2f;
+        float worldY = this.gridY * tileSize + (tileSize - BOMB_SIZE) / 2f;
+        Gdx.app.log("DEBUG", "tileSize: " + tileSize + " gridX: " + gridX + " gridY: " + gridY + " BombSize: " + BOMB_SIZE);
+        Gdx.app.log("DEBUG", "worldX: " + worldX + " worldY: " + worldY + " gridX: " + gridX + " gridY: " + worldY);
         this.worldPos = new Vector2(worldX, worldY);
-        this.gridX    = (int)((worldX + tile / 2f) / tile);
-        this.gridY    = (int)((worldY + tile / 2f) / tile);
         this.texture  = tex;
     }
 
@@ -36,30 +44,49 @@ public class Bomb {
     }
 
     public void render(SpriteBatch batch) {
-        if (!exploded) batch.draw(texture, worldPos.x, worldPos.y);
+        if (!exploded) {
+            batch.draw(texture, worldPos.x, worldPos.y, BOMB_SIZE, BOMB_SIZE);
+        }
     }
 
-    public void explode(Blocks[][] map, float tile, List <Player> players) {
+    public void explode(Blocks[][] map, float tile, List<Player> players) {
+        // Eksplozja na pozycji bomby
         damageCell(gridX, gridY, map);
 
+        // Eksplozja w czterech kierunkach
         for (int d = 1; d <= radius; ++d) if (!damageCell(gridX + d, gridY, map)) break;
         for (int d = 1; d <= radius; ++d) if (!damageCell(gridX - d, gridY, map)) break;
         for (int d = 1; d <= radius; ++d) if (!damageCell(gridX, gridY + d, map)) break;
         for (int d = 1; d <= radius; ++d) if (!damageCell(gridX, gridY - d, map)) break;
 
-        for(Player p : players){
+        // Sprawdzenie czy gracz został trafiony
+        for (Player p : players) {
             int px = Player.toGrid(p.getPosition().x, tile);
             int py = Player.toGrid(p.getPosition().y, tile);
-            if(Math.abs(px - gridX) + Math.abs(py - gridY) <= radius){
+
+            // Sprawdź czy gracz znajduje się w zasięgu wybuchu
+            if ((px == gridX && Math.abs(py - gridY) <= radius) ||
+                (py == gridY && Math.abs(px - gridX) <= radius) ||
+                (px == gridX && py == gridY)) {
                 p.die();
             }
         }
     }
 
     private static boolean damageCell(int x, int y, Blocks[][] map) {
+        // Sprawdź czy współrzędne są prawidłowe
         if (x < 0 || y < 0 || x >= map.length || y >= map[0].length) return false;
+
+        // Puste pole - eksplozja przechodzi dalej
         if (map[x][y] == null) return true;
-        if (map[x][y].isBreakable()) { map[x][y].onDestroy(); return false; }
+
+        // Blok zniszczalny - zniszcz i zatrzymaj eksplozję
+        if (map[x][y].isBreakable()) {
+            map[x][y].onDestroy();
+            return false;
+        }
+
+        // Blok niezniszczalny - zatrzymaj eksplozję
         return !map[x][y].isSolid();
     }
 }

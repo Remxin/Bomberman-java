@@ -25,9 +25,10 @@ import com.badlogic.gdx.Input;
 public class GameScreen implements Screen {
     private Main game;
     private static final float WORLD_WIDTH = 800;
-    private static final float WORLD_HEIGHT = 600;
+    private static final float WORLD_HEIGHT = 608;
     private static final float TILE_SIZE = 32f;
     private static final float PLAYER_SIZE = TILE_SIZE - 8f;
+    private static final float BOMB_SIZE = TILE_SIZE - 8f;
 
     private OrthographicCamera camera;
     private ShapeRenderer shapeRenderer;
@@ -83,8 +84,7 @@ public class GameScreen implements Screen {
         bombManager.addPlayer(p1);
         bombManager.addPlayer(p2);
 
-        Gdx.app.log("DEBUG", "player speed: " + game.context.initialPlayerSpeed);
-        c1 = new PlayerController(p1, bombManager, 10, Input.Keys.W, Input.Keys.S, Input.Keys.A, Input.Keys.D, Input.Keys.SPACE, (float)game.context.initialPlayerSpeed);
+        c1 = new PlayerController(p1, bombManager, TILE_SIZE, Input.Keys.W, Input.Keys.S, Input.Keys.A, Input.Keys.D, Input.Keys.SPACE, (float)game.context.initialPlayerSpeed);
         c2 = new PlayerController(p2, bombManager, TILE_SIZE, Input.Keys.UP, Input.Keys.DOWN, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.ENTER, (float)game.context.initialPlayerSpeed);
 
     }
@@ -163,25 +163,55 @@ public class GameScreen implements Screen {
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        for (int x = 0; x < map.length; x++) {
+
+        // Rysowanie mapy
+        for (Blocks[] blocks : map) {
             for (int y = 0; y < map[0].length; y++) {
-                if (map[x][y] != null) {
-                    map[x][y].render(batch);
+                if (blocks[y] != null) {
+                    blocks[y].render(batch);
                 }
             }
         }
+
+        // Rysowanie bomb
         bombManager.render(batch);
         batch.end();
 
+        // Rysowanie graczy (tylko jeśli są żywi)
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        Vector2 v = p1.getPosition();
-        shapeRenderer.rect(v.x, v.y, PLAYER_SIZE, PLAYER_SIZE);
-        v = p2.getPosition();
-        shapeRenderer.rect(v.x, v.y, PLAYER_SIZE, PLAYER_SIZE);
+
+        if (p1.isAlive()) {
+            Vector2 v1 = p1.getPosition();
+            shapeRenderer.setColor(1, 0, 0, 1); // Czerwony dla gracza 1
+            shapeRenderer.rect(v1.x, v1.y, PLAYER_SIZE, PLAYER_SIZE);
+        }
+
+        if (p2.isAlive()) {
+            Vector2 v2 = p2.getPosition();
+            shapeRenderer.setColor(0, 0, 1, 1); // Niebieski dla gracza 2
+            shapeRenderer.rect(v2.x, v2.y, PLAYER_SIZE, PLAYER_SIZE);
+        }
 
         shapeRenderer.setColor(1, 1, 1, 1);
         shapeRenderer.end();
+
+        // Sprawdzenie warunków zakończenia gry
+        checkGameOver();
+    }
+
+    // Dodaj tę metodę do klasy GameScreen
+    private void checkGameOver() {
+        if (!p1.isAlive() && !p2.isAlive()) {
+            Gdx.app.log("GAME", "Game Over! Both players died!");
+            // Można dodać tutaj logikę zakończenia gry lub powrotu do menu
+        } else if (!p1.isAlive()) {
+            Gdx.app.log("GAME", "Player 2 wins!");
+            // Logika dla zwycięstwa gracza 2
+        } else if (!p2.isAlive()) {
+            Gdx.app.log("GAME", "Player 1 wins!");
+            // Logika dla zwycięstwa gracza 1
+        }
     }
 
     @Override public void show()    {}
