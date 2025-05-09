@@ -3,29 +3,31 @@ package com.bomberman.classes;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+
+import java.util.*;
 
 public class BombManager {
 
     private final List<Bomb> bombs = new ArrayList<>();
-    private final Texture bombTexture;
+    private final Map<PlayerColor, Texture> bombTextures = new HashMap<>();
     private final float tileSize;
     private final Blocks[][] map;
     private final List<Player> players = new ArrayList<>();
 
-    public BombManager(Blocks[][] map, float tileSize, Texture bombTex) {
+    public BombManager(Blocks[][] map, float tileSize) {
         this.map = map;
         this.tileSize = tileSize;
-        this.bombTexture = bombTex;
+    }
+
+    public void setBombTexture(PlayerColor color, Texture texture) {
+        bombTextures.put(color, texture);
     }
 
     public void addPlayer(Player player) {
         players.add(player);
     }
 
-    public void placeBomb(float worldX, float worldY) {
+    public void placeBomb(float worldX, float worldY, PlayerColor color) {
         // Konwersja współrzędnych świata na współrzędne siatki
         int gx = (int)(worldX / tileSize);
         int gy = (int)(worldY / tileSize);
@@ -40,8 +42,8 @@ public class BombManager {
         Gdx.app.log("DEBUG", "Placing bomb at grid: " + gx + "," + gy +
             " (world: " + worldX + "," + worldY + ")");
 
-        // Tworzenie nowej bomby - przekazujemy współrzędne siatki
-        bombs.add(new Bomb(gx, gy, tileSize, bombTexture));
+        Texture tex = bombTextures.get(color);
+        bombs.add(new Bomb(gx, gy, tileSize, tex));
     }
 
     public void update(float delta) {

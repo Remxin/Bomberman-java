@@ -10,15 +10,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.bomberman.classes.Blocks;
-import com.bomberman.classes.BreakableBlock;
-import com.bomberman.classes.Player;
-import com.bomberman.classes.BombManager;
-import com.bomberman.classes.Bomb;
-import com.bomberman.classes.SolidBlock;
+import com.bomberman.classes.*;
 import com.bomberman.game.Main;
 import com.sun.tools.javac.comp.Todo;
-import com.bomberman.classes.PlayerController;
 import com.badlogic.gdx.Input;
 
 
@@ -56,7 +50,9 @@ public class GameScreen implements Screen {
 
         wallTex  = new Texture(Gdx.files.internal("solid_block.png"));
         brickTex = new Texture(Gdx.files.internal("breakable_block.png"));
-        bombTex  = new Texture(Gdx.files.internal("bomb.png"));
+        Texture bombRedTex = new Texture(Gdx.files.internal("bomb_red.png"));
+        Texture bombBlueTex = new Texture(Gdx.files.internal("bomb_blue.png"));
+//        bombTex  = new Texture(Gdx.files.internal("bomb.png"));
 
         map = new Blocks[Map_W][Map_H];
         for (int x = 0; x < map.length; x++) {
@@ -78,9 +74,11 @@ public class GameScreen implements Screen {
         }
 
 
-        p1 = new Player(new Vector2(SPAWNS[0][0]*TILE_SIZE, SPAWNS[0][1]*TILE_SIZE), PLAYER_SIZE);
-        p2 = new Player(new Vector2(SPAWNS[1][0]*TILE_SIZE, SPAWNS[1][1]*TILE_SIZE), PLAYER_SIZE);
-        bombManager = new BombManager(map, TILE_SIZE, bombTex);
+        p1 = new Player(new Vector2(SPAWNS[0][0]*TILE_SIZE, SPAWNS[0][1]*TILE_SIZE), PLAYER_SIZE, PlayerColor.RED);
+        p2 = new Player(new Vector2(SPAWNS[1][0]*TILE_SIZE, SPAWNS[1][1]*TILE_SIZE), PLAYER_SIZE, PlayerColor.BLUE);
+        bombManager = new BombManager(map, TILE_SIZE);
+        bombManager.setBombTexture(PlayerColor.RED, bombRedTex);
+        bombManager.setBombTexture(PlayerColor.BLUE, bombBlueTex);
         bombManager.addPlayer(p1);
         bombManager.addPlayer(p2);
 

@@ -50,7 +50,7 @@ public class PlayerController {
             Gdx.app.log("DEBUG", "gridX: " + gridX + " gridY: " + gridY + " worldX: " + worldX + " worldY: " + worldY);
 
             // Umieść bombę używając współrzędnych świata
-            bombManager.placeBomb(worldX, worldY);
+            bombManager.placeBomb(worldX, worldY, player.getColor());
         }
     }
 }
