@@ -14,9 +14,8 @@ public class Player {
     public Player(Vector2 spawnPos, float tileSize) {
         this.tileSize = tileSize;
         this.position = new Vector2(spawnPos);
-        this.bounds   = new Rectangle(position.x, position.y, tileSize, tileSize);
+        this.bounds = new Rectangle(position.x, position.y, tileSize, tileSize);
     }
-
 
     public void move(float dx, float dy) {
         if (!isAlive) return;
@@ -33,15 +32,17 @@ public class Player {
         bounds.setPosition(position.x, position.y);
     }
 
+    public Vector2 getPosition() { return position; }
+    public Rectangle getBounds() { return bounds; }
 
-    public Vector2   getPosition() { return position; }
-    public Rectangle getBounds()   { return bounds;   }
+    public boolean isAlive() { return isAlive; }
+    public void die() {
+        isAlive = false;
+        System.out.println("Player died!");
+    }
 
-    public boolean isAlive()   { return isAlive; }
-    public void    die()       { isAlive = false; }
-
-
-    public static int toGrid(float worldCoord, float tile) {
-        return (int)((worldCoord + tile / 2f) / tile);
+    // Konwertuje współrzędną świata na indeks siatki
+    public static int toGrid(float worldCoord, float tileSize) {
+        return (int)(worldCoord / tileSize);
     }
 }

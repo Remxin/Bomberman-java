@@ -4,27 +4,31 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
 public class PlayerController {
-
-
     private final Player player;
     private final BombManager bombManager;
-    private final float tile;
-    private final float speed; // * 50
+    private final float tileSize;
+    private final float speed;
 
     private final int upKey, downKey, leftKey, rightKey, bombKey;
 
-    public PlayerController(Player player, BombManager bombManager,float tileSize,int upKey, int downKey, int leftKey, int rightKey,int bombKey, float speed) {
-        this.player      = player;
+    public PlayerController(Player player, BombManager bombManager, float tileSize,
+                            int upKey, int downKey, int leftKey, int rightKey,
+                            int bombKey, float speed) {
+        this.player = player;
         this.bombManager = bombManager;
-        this.tile        = tileSize;
-        this.upKey       = upKey;
-        this.downKey     = downKey;
-        this.leftKey     = leftKey;
-        this.rightKey    = rightKey;
-        this.bombKey     = bombKey;
+        this.tileSize = tileSize;
+        this.upKey = upKey;
+        this.downKey = downKey;
+        this.leftKey = leftKey;
+        this.rightKey = rightKey;
+        this.bombKey = bombKey;
         this.speed = speed * 90;
     }
+
     public void update(float delta) {
+        if (!player.isAlive()) return;
+
+        // Przetwarzanie ruchu gracza
         float dx = 0f, dy = 0f;
         if (Gdx.input.isKeyPressed(upKey))    dy =  1;
         if (Gdx.input.isKeyPressed(downKey))  dy = -1;
@@ -33,13 +37,19 @@ public class PlayerController {
 
         player.move(dx * speed * delta, dy * speed * delta);
 
+        // Przetwarzanie umieszczania bomby
         if (Gdx.input.isKeyJustPressed(bombKey)) {
-            int gridX = Player.toGrid(player.getPosition().x, tile);
-            int gridY = Player.toGrid(player.getPosition().y, tile);
+            // Pobierz pozycję gracza i zamień ją na współrzędne siatki
+            int gridX = Player.toGrid(player.getPosition().x + player.getBounds().width / 2, tileSize);
+            int gridY = Player.toGrid(player.getPosition().y + player.getBounds().height / 2, tileSize);
 
-            float worldX = gridX * tile;
-            float worldY = gridY * tile;
 
+            // Przekaż współrzędne świata odpowiadające współrzędnym siatki
+            float worldX = gridX * tileSize;
+            float worldY = gridY * tileSize;
+            Gdx.app.log("DEBUG", "gridX: " + gridX + " gridY: " + gridY + " worldX: " + worldX + " worldY: " + worldY);
+
+            // Umieść bombę używając współrzędnych świata
             bombManager.placeBomb(worldX, worldY);
         }
     }
