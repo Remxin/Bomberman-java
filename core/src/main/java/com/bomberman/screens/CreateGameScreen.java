@@ -47,7 +47,7 @@ public class CreateGameScreen implements Screen {
         Texture spriteSheet = new Texture(Gdx.files.internal("player_sprite.png"));
         TextureRegion[][] regions = TextureRegion.split(spriteSheet, 24, 24);
 
-        TextureRegion playerRegion = regions[0][4]; // <-- zmień indeksy w zależności od tego który sprite chcesz
+        TextureRegion playerRegion = regions[0][2];
 
         Image player1Image = new Image(new TextureRegionDrawable(playerRegion));
         player1Image.setSize(100, 100);

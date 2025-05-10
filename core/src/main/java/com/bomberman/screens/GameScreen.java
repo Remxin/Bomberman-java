@@ -16,6 +16,8 @@ import com.bomberman.game.Main;
 import com.sun.tools.javac.comp.Todo;
 import com.badlogic.gdx.Input;
 
+import com.bomberman.screens.EndGameScreen;
+
 
 public class GameScreen implements Screen {
     private Main game;
@@ -221,13 +223,13 @@ public class GameScreen implements Screen {
     private void checkGameOver() {
         if (!p1.isAlive() && !p2.isAlive()) {
             Gdx.app.log("GAME", "Game Over! Both players died!");
-            // Można dodać tutaj logikę zakończenia gry lub powrotu do menu
+            game.setScreen(new EndGameScreen(game, null));
         } else if (!p1.isAlive()) {
             Gdx.app.log("GAME", "Player 2 wins!");
-            // Logika dla zwycięstwa gracza 2
+            game.setScreen(new EndGameScreen(game, p2));
         } else if (!p2.isAlive()) {
             Gdx.app.log("GAME", "Player 1 wins!");
-            // Logika dla zwycięstwa gracza 1
+            game.setScreen(new EndGameScreen(game, p1));
         }
     }
 
