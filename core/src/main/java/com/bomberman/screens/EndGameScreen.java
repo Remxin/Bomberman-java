@@ -20,8 +20,6 @@ import com.bomberman.game.Main;
 import com.bomberman.ui.*;
 import com.badlogic.gdx.graphics.Color;
 
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 
 public class EndGameScreen implements Screen {
     private Stage stage;

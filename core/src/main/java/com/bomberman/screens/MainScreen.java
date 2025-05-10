@@ -45,6 +45,9 @@ public class MainScreen implements Screen {
 
         Image logo = new Image(new TextureRegion(logo_texture));
 
+        logo.setPosition(Gdx.graphics.getWidth() / 2.0f - logo_texture.getWidth() / 2.0f,
+            Gdx.graphics.getHeight() / 1.4f - logo_texture.getHeight() / 2.0f);
+
         ImageButton play_button = new ScreenRedirectButton(
             game,
             play_button_texture,
