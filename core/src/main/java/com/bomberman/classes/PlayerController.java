@@ -8,6 +8,7 @@ public class PlayerController {
     private final BombManager bombManager;
     private final float tileSize;
     private final float speed;
+    public Direction direction;
 
     private final int upKey, downKey, leftKey, rightKey, bombKey;
 
@@ -30,10 +31,27 @@ public class PlayerController {
 
         // Przetwarzanie ruchu gracza
         float dx = 0f, dy = 0f;
-        if (Gdx.input.isKeyPressed(upKey))    dy =  1;
-        if (Gdx.input.isKeyPressed(downKey))  dy = -1;
-        if (Gdx.input.isKeyPressed(leftKey))  dx = -1;
-        if (Gdx.input.isKeyPressed(rightKey)) dx =  1;
+        player.isMoving = false;
+        if (Gdx.input.isKeyPressed(upKey))    {
+            direction = Direction.UP;
+            player.setDirection(Direction.UP, true);
+            dy =  1;
+        }
+        if (Gdx.input.isKeyPressed(downKey))  {
+            direction = Direction.DOWN;
+            player.setDirection(Direction.DOWN, true);
+            dy = -1;
+        }
+        if (Gdx.input.isKeyPressed(leftKey))  {
+            direction = Direction.LEFT;
+            player.setDirection(Direction.LEFT, true);
+            dx = -1;
+        }
+        if (Gdx.input.isKeyPressed(rightKey)) {
+            direction = Direction.RIGHT;
+            player.setDirection(Direction.RIGHT, true);
+            dx =  1;
+        }
 
         player.move(dx * speed * delta, dy * speed * delta);
 

@@ -26,6 +26,8 @@ public class GameScreen implements Screen {
     private static final float PLAYER_SIZE = TILE_SIZE - 8f;
     private static final float BOMB_SIZE = TILE_SIZE - 8f;
 
+    private static final int SPRITE_FIELD_SIZE = 24;
+
     private OrthographicCamera camera;
     private ShapeRenderer shapeRenderer;
     private SpriteBatch batch;
@@ -43,6 +45,7 @@ public class GameScreen implements Screen {
     private Player p1, p2;
     private PlayerController c1, c2;
     private Texture playerHeadRedTex, playerHeadBlueTex;
+    private Texture playerSpriteSheet;
 
 
     public GameScreen(Game g) {
@@ -54,6 +57,8 @@ public class GameScreen implements Screen {
 
         font = new BitmapFont();
         font.getData().setScale(1.2f);
+
+        playerSpriteSheet = new Texture(Gdx.files.internal("player_sprite.png"));
 
         wallTex  = new Texture(Gdx.files.internal("solid_block.png"));
         brickTex = new Texture(Gdx.files.internal("breakable_block.png"));
@@ -86,8 +91,11 @@ public class GameScreen implements Screen {
         }
 
 
-        p1 = new Player(new Vector2(SPAWNS[0][0]*TILE_SIZE, SPAWNS[0][1]*TILE_SIZE), PLAYER_SIZE, PlayerColor.RED, game.context.maxPlayerHealth, game.context.initialBombExplosionRadius);
-        p2 = new Player(new Vector2(SPAWNS[1][0]*TILE_SIZE, SPAWNS[1][1]*TILE_SIZE), PLAYER_SIZE, PlayerColor.BLUE, game.context.maxPlayerHealth, game.context.initialBombExplosionRadius);
+        p1 = new Player(new Vector2(SPAWNS[0][0]*TILE_SIZE, SPAWNS[0][1]*TILE_SIZE), PLAYER_SIZE, PlayerColor.RED, game.context.maxPlayerHealth, game.context.initialBombExplosionRadius, PLAYER_SIZE);
+        p2 = new Player(new Vector2(SPAWNS[1][0]*TILE_SIZE, SPAWNS[1][1]*TILE_SIZE), PLAYER_SIZE, PlayerColor.BLUE, game.context.maxPlayerHealth, game.context.initialBombExplosionRadius, PLAYER_SIZE);
+
+        p1.loadAnimations(playerSpriteSheet, SPRITE_FIELD_SIZE, SPRITE_FIELD_SIZE);
+        p2.loadAnimations(playerSpriteSheet, SPRITE_FIELD_SIZE, SPRITE_FIELD_SIZE);
 
         bombManager = new BombManager(map, TILE_SIZE);
         bombManager.setBombTexture(PlayerColor.RED, bombRedTex);
@@ -191,27 +199,20 @@ public class GameScreen implements Screen {
         // Rysowanie bomb
         bombManager.render(batch);
         renderUI();
-        batch.end();
 
-        // Rysowanie graczy (tylko jeśli są żywi)
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         if (p1.isAlive()) {
-            Vector2 v1 = p1.getPosition();
-            shapeRenderer.setColor(1, 0, 0, 1); // Czerwony dla gracza 1
-            shapeRenderer.rect(v1.x, v1.y, PLAYER_SIZE, PLAYER_SIZE);
+            p1.render(batch);
+            p1.update(delta);
         }
 
         if (p2.isAlive()) {
-            Vector2 v2 = p2.getPosition();
-            shapeRenderer.setColor(0, 0, 1, 1); // Niebieski dla gracza 2
-            shapeRenderer.rect(v2.x, v2.y, PLAYER_SIZE, PLAYER_SIZE);
+            p2.render(batch);
+            p2.update(delta);
         }
 
 
-        shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.end();
+        batch.end();
 
         // Sprawdzenie warunków zakończenia gry
         checkGameOver();
