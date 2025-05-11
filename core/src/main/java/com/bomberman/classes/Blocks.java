@@ -1,6 +1,5 @@
 package com.bomberman.classes;
 
-
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -36,8 +35,6 @@ public abstract class Blocks {
     public boolean isBreakable() {
         return isBreakable;
     }
-
-    public boolean isDestroyed() {return isDestroyed;}
 
     public abstract void onDestroy();
 }

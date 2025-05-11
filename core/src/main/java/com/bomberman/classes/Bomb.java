@@ -17,10 +17,10 @@ public class Bomb {
     private final int gridX, gridY;
 
     private float  timer   = 0f;
-    private int    radius  = DEFAULT_RADIUS;
+    private int radius  = DEFAULT_RADIUS;
     public static final float BOMB_SIZE = 30f;
     public boolean exploded = false;
-    private float tileSize;
+    private final float tileSize;
 
     private final Texture texture;
     private final Texture explosionTexture;
@@ -35,7 +35,6 @@ public class Bomb {
     private final List<ExplosionTile> explosionTiles = new ArrayList<>();
     private float explosionTimer = 0f;
     private static final float EXPLOSION_DURATION = 0.5f;
-    private boolean finished = false;
 
     public Bomb(float gridX, float gridY, float tileSize, Texture tex, Texture explosionTexture, int radius) {
         this.gridX = (int)gridX;
@@ -75,10 +74,6 @@ public class Bomb {
         float wx = x * tileSize + (tileSize - BOMB_SIZE) / 2f;
         float wy = y * tileSize + (tileSize - BOMB_SIZE) / 2f;
         explosionTiles.add(new ExplosionTile(wx, wy));
-    }
-
-    public boolean isFinished() {
-        return finished;
     }
 
     public void render(SpriteBatch batch) {

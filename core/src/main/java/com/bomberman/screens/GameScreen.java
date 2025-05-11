@@ -18,22 +18,19 @@ import com.badlogic.gdx.Input;
 
 import com.bomberman.screens.EndGameScreen;
 
-
 public class GameScreen implements Screen {
-    private Main game;
+    private final Main game;
     private static final float WORLD_WIDTH = 800;
     private static final float PLAYER_HEADER_HEIGHT = 50;
     private static final float WORLD_HEIGHT = 608;
     private static final float TILE_SIZE = 32f;
     private static final float PLAYER_SIZE = TILE_SIZE - 8f;
-    private static final float BOMB_SIZE = TILE_SIZE - 8f;
-
     private static final int SPRITE_FIELD_SIZE = 24;
 
-    private OrthographicCamera camera;
-    private ShapeRenderer shapeRenderer;
-    private SpriteBatch batch;
-    private BitmapFont font;
+    private final OrthographicCamera camera;
+    private final ShapeRenderer shapeRenderer;
+    private final SpriteBatch batch;
+    private final BitmapFont font;
 
     private static final int Map_W = 25;
     private static final int Map_H = 19;
@@ -41,13 +38,16 @@ public class GameScreen implements Screen {
             {1,1}, {Map_W - 2, Map_H - 2},
     };
 
-    private Blocks[][] map;
-    private Texture wallTex, brickTex, bombTex;
-    private BombManager bombManager;
-    private Player p1, p2;
-    private PlayerController c1, c2;
-    private Texture playerHeadRedTex, playerHeadBlueTex;
-    private Texture playerSpriteSheet;
+    private final Blocks[][] map;
+    private final Texture wallTex;
+    private final Texture brickTex;
+    private final BombManager bombManager;
+    private final Player p1;
+    private final Player p2;
+    private final PlayerController c1;
+    private final PlayerController c2;
+    private final Texture playerHeadRedTex;
+    private final Texture playerHeadBlueTex;
 
 
     public GameScreen(Game g) {
@@ -60,7 +60,7 @@ public class GameScreen implements Screen {
         font = new BitmapFont();
         font.getData().setScale(1.2f);
 
-        playerSpriteSheet = new Texture(Gdx.files.internal("player_sprite.png"));
+        Texture playerSpriteSheet = new Texture(Gdx.files.internal("player_sprite.png"));
 
         wallTex  = new Texture(Gdx.files.internal("solid_block.png"));
         brickTex = new Texture(Gdx.files.internal("breakable_block.png"));
@@ -120,13 +120,10 @@ public class GameScreen implements Screen {
         int endX = Math.min(map.length - 1, (int)((playerBounds.x + playerBounds.width) / TILE_SIZE));
         int endY = Math.min(map[0].length - 1, (int)((playerBounds.y + playerBounds.height) / TILE_SIZE));
 
-        boolean collisionDetected = false;
-
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
                 Blocks block = map[x][y];
                 if (block != null && block.isSolid() && block.getBounds().overlaps(playerBounds)) {
-                    collisionDetected = true;
 
                     float overlapLeft = (block.getBounds().x + block.getBounds().width) - playerBounds.x;
                     float overlapRight = (playerBounds.x + playerBounds.width) - block.getBounds().x;
@@ -149,10 +146,6 @@ public class GameScreen implements Screen {
                     playerBounds = player.getBounds();
                 }
             }
-        }
-
-        if (!collisionDetected) {
-            return;
         }
     }
 
@@ -223,13 +216,13 @@ public class GameScreen implements Screen {
     private void checkGameOver() {
         if (!p1.isAlive() && !p2.isAlive()) {
             Gdx.app.log("GAME", "Game Over! Both players died!");
-            game.setScreen(new EndGameScreen(game, null));
+            game.setScreen(new EndGameScreen(null));
         } else if (!p1.isAlive()) {
             Gdx.app.log("GAME", "Player 2 wins!");
-            game.setScreen(new EndGameScreen(game, p2));
+            game.setScreen(new EndGameScreen(p2));
         } else if (!p2.isAlive()) {
             Gdx.app.log("GAME", "Player 1 wins!");
-            game.setScreen(new EndGameScreen(game, p1));
+            game.setScreen(new EndGameScreen(p1));
         }
     }
 
@@ -261,6 +254,5 @@ public class GameScreen implements Screen {
         batch.dispose();
         wallTex.dispose();
         brickTex.dispose();
-        bombTex.dispose();
     }
 }

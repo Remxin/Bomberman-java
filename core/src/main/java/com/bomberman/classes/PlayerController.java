@@ -1,7 +1,6 @@
 package com.bomberman.classes;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 
 public class PlayerController {
     private final Player player;
