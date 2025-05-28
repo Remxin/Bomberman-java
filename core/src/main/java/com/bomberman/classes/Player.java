@@ -15,13 +15,12 @@ public class Player {
     private final Vector2 position;
     private final Vector2 spawnPosition;
     private final Rectangle bounds;
-    private final float tileSize;
     public int bombExplosionRadius;
     public Map<Direction, Animation<TextureRegion>> walkAnimations;
     public Direction walkDirection = Direction.DOWN;
     public float animationStateTimer = 0f;
     public boolean isMoving = false;
-    private float playerSize;
+    private final float playerSize;
 
     public int hearth;
     public PlayerColor color;
@@ -29,7 +28,6 @@ public class Player {
     private boolean isAlive = true;
 
     public Player(Vector2 spawnPos, float tileSize, PlayerColor color, int hearth, int bombExplosionRadius, float playerSize) {
-        this.tileSize = tileSize;
         this.color = color;
         this.position = new Vector2(spawnPos);
         this.spawnPosition = new Vector2(spawnPos);
@@ -71,7 +69,6 @@ public class Player {
 
     public void render(SpriteBatch batch) {
         TextureRegion frame;
-        Gdx.app.log("Player", "timer" + animationStateTimer + " isMoving" + isMoving);
         if (isMoving) {
             frame = walkAnimations.get(walkDirection).getKeyFrame(animationStateTimer, true);
         } else {

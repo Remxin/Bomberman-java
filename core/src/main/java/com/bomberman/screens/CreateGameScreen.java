@@ -21,7 +21,7 @@ import com.bomberman.ui.*;
 
 public class CreateGameScreen implements Screen {
     private Stage stage;
-    private Main game;
+    private final Main game;
     private Texture wsad_keys_texture;
     private Texture arrow_keys_texture;
     private Texture play_button_texture;
