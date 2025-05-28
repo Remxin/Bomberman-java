@@ -69,7 +69,6 @@ public class Player {
 
     public void render(SpriteBatch batch) {
         TextureRegion frame;
-        Gdx.app.log("Player", "timer" + animationStateTimer + " isMoving" + isMoving);
         if (isMoving) {
             frame = walkAnimations.get(walkDirection).getKeyFrame(animationStateTimer, true);
         } else {
